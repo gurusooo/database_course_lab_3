@@ -61,7 +61,7 @@ def get_test_list():
 
 
 if __name__ == "__main__":
-    print(get_test_list())
+    print(get_path_to_csv())
 
 
 
