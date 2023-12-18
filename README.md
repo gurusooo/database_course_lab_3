@@ -25,7 +25,7 @@ csv= data/raw/nyc_yellow_big.csv
 
 # postgres database connection info
 POSTGRESQL_ENABLED= True
-NAME= название баззы данных
+NAME= название базы данных
 HOST= хост
 PORT= порт
 USER= имя пользователя
