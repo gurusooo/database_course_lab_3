@@ -1,2 +1,5 @@
 .idea/
-data/
+data/converted/nyc_yellow_big.db
+data/converted/nyc_yellow_tiny.db
+data/raw/nyc_yellow_big.csv
+data/raw/nyc_yellow_tiny.csv
