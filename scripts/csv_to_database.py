@@ -12,11 +12,11 @@ postgres_data = get_postgres_data()
 path = get_path_to_csv()
 absolute_path = os.path.abspath("../" + path)
 
-def to_postgres_and_sqlite():
-    # prepare name for table
-    db_table_name = path.lstrip("data/raw/")
-    db_table_name = db_table_name.rstrip(".csv")
+# prepare name for table
+db_table_name = path.lstrip("data/raw/")
+db_table_name = db_table_name.rstrip(".csv")
 
+def to_postgres_and_sqlite():
     # read from csv
     data = pd.read_csv(r"../" + get_path_to_csv(), nrows=2)
 
@@ -86,6 +86,7 @@ def to_postgres_and_sqlite():
     sqlite_db_path = f"../data/converted/{db_table_name}.db"
     file = open(absolute_path, "r")
     contents = csv.reader(file)
+    next(contents)
 
     conn = sqlite3.connect(sqlite_db_path)
     cursor = conn.cursor()
