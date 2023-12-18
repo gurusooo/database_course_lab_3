@@ -1,6 +1,7 @@
 import duckdb
-from csv_to_database import db_table_name
-database = f"../data/converted/{db_table_name}.db"
+from csv_to_database import db_table_name, postgres_data
+database = f"postgres://{postgres_data['user=']}:{postgres_data['password=']}@" \
+           f"{postgres_data['host=']}:{postgres_data['port=']}/{postgres_data['name=']}"
 
 def q1_duckdb(print_flag=False):
     sql_request = f"SELECT vendorid, COUNT(*) FROM {db_table_name} GROUP BY 1;"
@@ -10,7 +11,7 @@ def q1_duckdb(print_flag=False):
         data.show()
 
 def q2_duckdb(print_flag=False):
-    sql_request = f"""SELECT passenger_count, avg(cast(total_amount as FLOAT))
+    sql_request = f"""SELECT passenger_count, avg(total_amount)
                   FROM {db_table_name} GROUP BY 1;"""
     data = duckdb.sql(sql_request)
 
@@ -20,7 +21,7 @@ def q2_duckdb(print_flag=False):
 
 def q3_duckdb(print_flag=False):
     sql_request = f"""SELECT passenger_count,
-                        extract(year from cast(tpep_pickup_datetime as timestamp)),
+                        extract(year from tpep_pickup_datetime),
                         COUNT(*)
                         FROM {db_table_name}
                         GROUP BY 1, 2;"""
@@ -33,8 +34,8 @@ def q3_duckdb(print_flag=False):
 def q4_duckdb(print_flag=False):
     sql_request = f"""SELECT
                    passenger_count,
-                   extract(year from cast(tpep_pickup_datetime as timestamp)),
-                   round(cast(trip_distance as float)),
+                   extract(year from tpep_pickup_datetime),
+                   round(trip_distance),
                    count(*)
                    FROM {db_table_name}
                    GROUP BY 1, 2, 3
@@ -46,9 +47,6 @@ def q4_duckdb(print_flag=False):
 
 
 if __name__ == "__main__":
-    # required to run duckdb.sql("INSTALL sqlite") once for sqlite extension for duckdb
-    duckdb.sql("SET GLOBAL sqlite_all_varchar=true;")
-    duckdb.sql("LOAD sqlite")
-    duckdb.sql(f"CALL sqlite_attach('{database}')")
-    q4_duckdb()
-
+    # required to run duckdb.sql("INSTALL postgres") once for postgres extension for duckdb
+    duckdb.sql(f"CALL postgres_attach('{database}')")
+    q4_duckdb(True)
