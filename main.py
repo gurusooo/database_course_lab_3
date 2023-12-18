@@ -45,138 +45,144 @@ recorded_time = {"psycopg2=": [[], [], [], []],
                  "sqlalchemy=": [[], [], [], []]}
 
 # Step 3: Start testing
+list_to_test = get_test_list()
 # Psycopg2
-print("\nPsycopg2 Testing started...")
-conn = psycopg2.connect(postgres_access)
-for _ in range(test_settings["test_qty="]):
+if list_to_test["psycopg2="]:
+    print("\nPsycopg2 Testing started...")
+    conn = psycopg2.connect(postgres_access)
+    for _ in range(test_settings["test_qty="]):
 
-    start = time()
-    q1_psycopg2(conn, db_table_name, test_settings["print_results="])
-    recorded_time["psycopg2="][0].append(time() - start)
+        start = time()
+        q1_psycopg2(conn, db_table_name, test_settings["print_results="])
+        recorded_time["psycopg2="][0].append(time() - start)
 
-    start = time()
-    q2_psycopg2(conn, db_table_name, test_settings["print_results="])
-    recorded_time["psycopg2="][1].append(time() - start)
+        start = time()
+        q2_psycopg2(conn, db_table_name, test_settings["print_results="])
+        recorded_time["psycopg2="][1].append(time() - start)
 
-    start = time()
-    q3_psycopg2(conn, db_table_name, test_settings["print_results="])
-    recorded_time["psycopg2="][2].append(time() - start)
+        start = time()
+        q3_psycopg2(conn, db_table_name, test_settings["print_results="])
+        recorded_time["psycopg2="][2].append(time() - start)
 
-    start = time()
-    q4_psycopg2(conn, db_table_name, test_settings["print_results="])
-    recorded_time["psycopg2="][3].append(time() - start)
+        start = time()
+        q4_psycopg2(conn, db_table_name, test_settings["print_results="])
+        recorded_time["psycopg2="][3].append(time() - start)
 
-conn.close()
-print("Psycopg2 Testing finished\n")
+    conn.close()
+    print("Psycopg2 Testing finished\n")
 
-# SQLite
-print("SQLite Testing started...")
-conn = sqlite3.connect(f"data/converted/{db_table_name}.db")
-for _ in range(test_settings["test_qty="]):
+if list_to_test["sqlite="]:
+    # SQLite
+    print("SQLite Testing started...")
+    conn = sqlite3.connect(f"data/converted/{db_table_name}.db")
+    for _ in range(test_settings["test_qty="]):
 
-    start = time()
-    q1_sqlite(conn, db_table_name, test_settings["print_results="])
-    recorded_time["sqlite="][0].append(time() - start)
+        start = time()
+        q1_sqlite(conn, db_table_name, test_settings["print_results="])
+        recorded_time["sqlite="][0].append(time() - start)
 
-    start = time()
-    q2_sqlite(conn, db_table_name, test_settings["print_results="])
-    recorded_time["sqlite="][1].append(time() - start)
+        start = time()
+        q2_sqlite(conn, db_table_name, test_settings["print_results="])
+        recorded_time["sqlite="][1].append(time() - start)
 
-    start = time()
-    q3_sqlite(conn, db_table_name, test_settings["print_results="])
-    recorded_time["sqlite="][2].append(time() - start)
+        start = time()
+        q3_sqlite(conn, db_table_name, test_settings["print_results="])
+        recorded_time["sqlite="][2].append(time() - start)
 
-    start = time()
-    q4_sqlite(conn, db_table_name, test_settings["print_results="])
-    recorded_time["sqlite="][3].append(time() - start)
+        start = time()
+        q4_sqlite(conn, db_table_name, test_settings["print_results="])
+        recorded_time["sqlite="][3].append(time() - start)
 
-conn.close()
-print("SQLite Testing finished\n")
+    conn.close()
+    print("SQLite Testing finished\n")
 
 
 
 # DuckDB
-print("DuckDB Testing started...")
-duckdb.sql("INSTALL postgres")
-duckdb.sql(f"CALL postgres_attach('{postgres_access}')")
-for _ in range(test_settings["test_qty="]):
+if list_to_test["duckdb="]:
+    print("DuckDB Testing started...")
+    duckdb.sql("INSTALL postgres")
+    duckdb.sql(f"CALL postgres_attach('{postgres_access}')")
+    for _ in range(test_settings["test_qty="]):
 
-    start = time()
-    q1_duckdb(db_table_name, test_settings["print_results="])
-    recorded_time["duckdb="][0].append(time() - start)
+        start = time()
+        q1_duckdb(db_table_name, test_settings["print_results="])
+        recorded_time["duckdb="][0].append(time() - start)
 
-    start = time()
-    q2_duckdb(db_table_name, test_settings["print_results="])
-    recorded_time["duckdb="][1].append(time() - start)
+        start = time()
+        q2_duckdb(db_table_name, test_settings["print_results="])
+        recorded_time["duckdb="][1].append(time() - start)
 
-    start = time()
-    q3_duckdb(db_table_name, test_settings["print_results="])
-    recorded_time["duckdb="][2].append(time() - start)
+        start = time()
+        q3_duckdb(db_table_name, test_settings["print_results="])
+        recorded_time["duckdb="][2].append(time() - start)
 
-    start = time()
-    q4_duckdb(db_table_name, test_settings["print_results="])
-    recorded_time["duckdb="][3].append(time() - start)
-print("DuckDB Testing finished\n")
+        start = time()
+        q4_duckdb(db_table_name, test_settings["print_results="])
+        recorded_time["duckdb="][3].append(time() - start)
+    print("DuckDB Testing finished\n")
 
 
 # Pandas
-print("Generating file for Pandas")
-pd.options.mode.chained_assignment = None
-engine = sqlalchemy.create_engine(postgres_access)
-sql = f"SELECT * FROM {db_table_name}"
-df = pd.read_sql(sql, con=engine)
-print("Pandas Testing started...")
-for _ in range(test_settings["test_qty="]):
+if list_to_test["pandas="]:
+    print("Generating file for Pandas")
+    pd.options.mode.chained_assignment = None
+    engine = sqlalchemy.create_engine(postgres_access)
+    sql = f"SELECT * FROM {db_table_name}"
+    df = pd.read_sql(sql, con=engine)
+    print("Pandas Testing started...")
+    for _ in range(test_settings["test_qty="]):
 
-    start = time()
-    q1_pandas(df, test_settings["print_results="])
-    recorded_time["pandas="][0].append(time() - start)
+        start = time()
+        q1_pandas(df, test_settings["print_results="])
+        recorded_time["pandas="][0].append(time() - start)
 
-    start = time()
-    q2_pandas(df, test_settings["print_results="])
-    recorded_time["pandas="][1].append(time() - start)
+        start = time()
+        q2_pandas(df, test_settings["print_results="])
+        recorded_time["pandas="][1].append(time() - start)
 
-    start = time()
-    q3_pandas(df, test_settings["print_results="])
-    recorded_time["pandas="][2].append(time() - start)
+        start = time()
+        q3_pandas(df, test_settings["print_results="])
+        recorded_time["pandas="][2].append(time() - start)
 
-    start = time()
-    q4_pandas(df, test_settings["print_results="])
-    recorded_time["pandas="][3].append(time() - start)
+        start = time()
+        q4_pandas(df, test_settings["print_results="])
+        recorded_time["pandas="][3].append(time() - start)
 
-engine.dispose()
-del df
-print("Pandas Testing finished\n")
+    engine.dispose()
+    del df
+    print("Pandas Testing finished\n")
 
 
 # SQLAlchemy
-print("SQLAlchemy Testing started...")
-engine = sqlalchemy.create_engine(postgres_access)
-metadata = sqlalchemy.MetaData()
-metadata.create_all(engine)
-conn = engine.connect()
+if list_to_test["sqlalchemy="]:
+    print("SQLAlchemy Testing started...")
+    engine = sqlalchemy.create_engine(postgres_access)
+    metadata = sqlalchemy.MetaData()
+    metadata.create_all(engine)
+    conn = engine.connect()
 
-for _ in range(test_settings["test_qty="]):
+    for _ in range(test_settings["test_qty="]):
 
-    start = time()
-    q1_sqlalchemy(conn, db_table_name, test_settings["print_results="])
-    recorded_time["sqlalchemy="][0].append(time() - start)
+        start = time()
+        q1_sqlalchemy(conn, db_table_name, test_settings["print_results="])
+        recorded_time["sqlalchemy="][0].append(time() - start)
 
-    start = time()
-    q2_sqlalchemy(conn, db_table_name, test_settings["print_results="])
-    recorded_time["sqlalchemy="][1].append(time() - start)
+        start = time()
+        q2_sqlalchemy(conn, db_table_name, test_settings["print_results="])
+        recorded_time["sqlalchemy="][1].append(time() - start)
 
-    start = time()
-    q3_sqlalchemy(conn, db_table_name, test_settings["print_results="])
-    recorded_time["sqlalchemy="][2].append(time() - start)
+        start = time()
+        q3_sqlalchemy(conn, db_table_name, test_settings["print_results="])
+        recorded_time["sqlalchemy="][2].append(time() - start)
 
-    start = time()
-    q4_sqlalchemy(conn, db_table_name, test_settings["print_results="])
-    recorded_time["sqlalchemy="][3].append(time() - start)
+        start = time()
+        q4_sqlalchemy(conn, db_table_name, test_settings["print_results="])
+        recorded_time["sqlalchemy="][3].append(time() - start)
 
-conn.close()
-engine.dispose()
-print("SQLAlchemy Testing finished\n")
+    conn.close()
+    engine.dispose()
+    print("SQLAlchemy Testing finished\n")
 
 
 # Step 4: Output results
@@ -185,13 +191,13 @@ queries = ("Q1", "Q2", "Q3", "Q4")
 plot_data = {}
 max_val = 0
 for key in recorded_time:
+    if list_to_test[key]:
+        temp_data = [round(median(recorded_time[key][0]) * 1000, 0), round(median(recorded_time[key][1]) * 1000, 0),
+                     round(median(recorded_time[key][2]) * 1000, 0), round(median(recorded_time[key][3]) * 1000, 0)]
 
-    temp_data = [round(median(recorded_time[key][0]) * 1000, 0), round(median(recorded_time[key][1]) * 1000, 0),
-                 round(median(recorded_time[key][2]) * 1000, 0), round(median(recorded_time[key][3]) * 1000, 0)]
-
-    temp_max = max(temp_data)
-    max_val = temp_max if temp_max > max_val else max_val
-    plot_data.setdefault(key.strip("="), tuple(temp_data))
+        temp_max = max(temp_data)
+        max_val = temp_max if temp_max > max_val else max_val
+        plot_data.setdefault(key.strip("="), tuple(temp_data))
 
 x = np.arange(len(queries))  # the label locations
 width = 0.18  # the width of the bars
