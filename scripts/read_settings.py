@@ -1,7 +1,7 @@
 # read postgres info to connect to database
 def get_postgres_data():
     data = {"postgresql_enabled=": None, "name=": None, "host=": None, "port=": None, "user=": None, "password=": None}
-    with open("../settings.conf", "rt", encoding="utf-8") as file:
+    with open("settings.conf", "rt", encoding="utf-8") as file:
         while True:
             temp = file.readline().strip()
             if "# postgres" in temp:
@@ -19,7 +19,7 @@ def get_postgres_data():
 
 
 def get_path_to_csv():
-    with open("../settings.conf", "rt", encoding="utf-8") as file:
+    with open("settings.conf", "rt", encoding="utf-8") as file:
 
         while True:
             temp = file.readline().strip()
@@ -42,7 +42,7 @@ def get_test_list():
         return None
 
     data = {"psycopg2=": None, "sqlite=": None, "duckdb=": None, "pandas=": None, "sqlalchemy=": None}
-    with open("../settings.conf", "rt", encoding="utf-8") as file:
+    with open("settings.conf", "rt", encoding="utf-8") as file:
         while True:
             temp = file.readline().strip()
             if "# Choose libraries" in temp:
@@ -56,12 +56,26 @@ def get_test_list():
     postgres_enabled = get_postgres_data()
     if postgres_enabled is None:
         data["psycopg2="] = False
-        print(f"PostgreSQL connection is not enabled! Therefore \"psycopg2\" library will not be tested")
+        data["duckdb="] = False
+        data["pandas="] = False
+        data["sqlalchemy="] = False
+        print(f"PostgreSQL connection is not enabled! Therefore \"psycopg2\", \"DuckDB\", \"Pandas\" and \"SQLAlchemy\" libraries will not be tested")
     return data
 
 
-if __name__ == "__main__":
-    print(get_path_to_csv())
-
-
-
+def get_test_settings():
+    data = {"test_qty=": None, "print_results=": False}
+    with open("settings.conf", "rt", encoding="utf-8") as file:
+        while True:
+            temp = file.readline().strip()
+            if "# Printing out" in temp:
+                for i in range(2):
+                    temp_data = file.readline().strip().split()
+                    setting = temp_data[0].lower()
+                    if setting == "print_results=":
+                        data[setting] = True if temp_data[1] == "True" else False
+                    else:
+                        data[setting] = int(temp_data[1])
+                return data
+            if temp is None:
+                return None

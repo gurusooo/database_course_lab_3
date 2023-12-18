@@ -1,9 +1,3 @@
-import pandas as pd
-from sqlalchemy import create_engine
-from csv_to_database import postgres_data, db_table_name
-database = f"postgresql://{postgres_data['user=']}:{postgres_data['password=']}@" \
-           f"{postgres_data['host=']}:{postgres_data['port=']}/{postgres_data['name=']}"
-
 def q1_pandas(dataframe, print_flag=False):
     data = dataframe[['VendorID']].groupby('VendorID').size().reset_index(name='counts')
     if print_flag:
@@ -30,14 +24,3 @@ def q4_pandas(dataframe, print_flag=False):
     )
     if print_flag:
         print(data)
-
-
-if __name__ == "__main__":
-    pd.options.mode.chained_assignment = None
-    engine = create_engine(database)
-    sql = f"SELECT * FROM {db_table_name}"
-    df = pd.read_sql(sql, con=engine)
-
-    q4_pandas(df, True)
-
-    engine.dispose()

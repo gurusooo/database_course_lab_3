@@ -1,12 +1,13 @@
 import pandas as pd
 import psycopg2
 import os
-from read_settings import get_path_to_csv, get_postgres_data
 import sqlite3
 import csv
+from scripts.read_settings import get_path_to_csv, get_postgres_data
+
 
 # get postgres connection info
-postgres_data = get_postgres_data()
+postgres = get_postgres_data()
 
 # get path to csv file
 path = get_path_to_csv()
@@ -18,7 +19,7 @@ db_table_name = db_table_name.rstrip(".csv")
 
 def to_postgres_and_sqlite():
     # read from csv
-    data = pd.read_csv(r"../" + get_path_to_csv(), nrows=2)
+    data = pd.read_csv(r"" + get_path_to_csv(), nrows=2)
 
     # prepare headers names
     headers = list(data.columns)
@@ -60,11 +61,11 @@ def to_postgres_and_sqlite():
             sqlite_request_insert_records += "?)"
 
     # connect to postgres database
-    conn = psycopg2.connect(database=postgres_data["name="],
-                            user=postgres_data["user="],
-                            password=postgres_data["password="],
-                            host=postgres_data["host="],
-                            port=postgres_data["port="])
+    conn = psycopg2.connect(database=postgres["name="],
+                            user=postgres["user="],
+                            password=postgres["password="],
+                            host=postgres["host="],
+                            port=postgres["port="])
     conn.autocommit = True
 
     print(f"Copying to PostgreSQL started ...")
@@ -73,7 +74,7 @@ def to_postgres_and_sqlite():
         cursor.execute(sql_request_delete_table)
         cursor.execute(sql_request_create_table)
         # cursor.execute(sql_request_copy_data)
-        with open(f"../" + path, "r") as csv_file:
+        with open(f"" + path, "r") as csv_file:
             cursor.copy_expert(sql=sql_request_copy_data, file=csv_file)
 
     print(f"Copying to PostgreSQL completed!")
@@ -83,8 +84,8 @@ def to_postgres_and_sqlite():
 
 
     # creating or opening sqlite database
-    sqlite_db_path = f"../data/converted/{db_table_name}.db"
-    file = open(absolute_path, "r")
+    sqlite_db_path = f"data/converted/{db_table_name}.db"
+    file = open(path, "r")
     contents = csv.reader(file)
     next(contents)
 
@@ -101,6 +102,3 @@ def to_postgres_and_sqlite():
     file.close()
     conn.commit()
     conn.close()
-
-if __name__ == "__main__":
-    to_postgres_and_sqlite()
