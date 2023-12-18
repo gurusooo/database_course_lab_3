@@ -97,6 +97,7 @@ print("SQLite Testing finished\n")
 
 # DuckDB
 print("DuckDB Testing started...")
+duckdb.sql("INSTALL postgres")
 duckdb.sql(f"CALL postgres_attach('{postgres_access}')")
 for _ in range(test_settings["test_qty="]):
 
